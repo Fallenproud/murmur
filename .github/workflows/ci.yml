@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "sophie/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install quality tools
+        run: python -m pip install --upgrade pytest ruff
+      - name: Lint canonical core
+        run: ruff check murmur_core tests
+      - name: Test canonical core
+        run: pytest
+      - name: Compile Python sources
+        run: python -m compileall -q murmur_core daemon.py gui.py
